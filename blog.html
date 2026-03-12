@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog — NSJ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black: #050505;
+      --white: #f7f5f0;
+      --gray-1: #111;
+      --gray-2: #1c1c1c;
+      --gray-3: #2e2e2e;
+      --gray-4: #555;
+      --gray-5: #888;
+      --gray-6: #bbb;
+      --serif: 'Playfair Display', Georgia, serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--sans); font-weight: 300; line-height: 1.7; overflow-x: hidden; }
+
+    body::after {
+      content: ''; position: fixed; inset: 0; z-index: 1000; opacity: .04; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 3.5rem;
+      background: rgba(5,5,5,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--gray-2);
+    }
+    .nav-logo { font-family: var(--mono); font-size: .72rem; color: var(--white); letter-spacing: .18em; text-transform: uppercase; text-decoration: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { font-family: var(--mono); font-size: .68rem; color: var(--gray-5); text-decoration: none; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 3rem; }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding-top: 10rem;
+      padding-bottom: 4rem;
+      border-bottom: 1px solid var(--gray-3);
+      max-width: 1080px; margin: 0 auto; padding-left: 3rem; padding-right: 3rem;
+    }
+    .page-eyebrow { font-family: var(--mono); font-size: .68rem; color: var(--gray-5); letter-spacing: .25em; text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+    .page-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--gray-5); }
+    .page-title { font-family: var(--serif); font-size: clamp(3.5rem, 7vw, 6.5rem); font-weight: 900; line-height: .92; letter-spacing: -.03em; }
+    .page-title em { font-style: italic; color: var(--gray-4); display: block; }
+
+    /* FILTER TABS */
+    .filter-bar {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--gray-3);
+      max-width: 1080px; margin: 0 auto; padding: 0 3rem;
+    }
+    .filter-btn {
+      font-family: var(--mono); font-size: .65rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--gray-4); background: none; border: none; cursor: pointer;
+      padding: 1.1rem 1.5rem 1.1rem 0;
+      margin-right: 2rem;
+      border-bottom: 1px solid transparent;
+      margin-bottom: -1px;
+    }
+    .filter-btn:hover { color: var(--white); }
+    .filter-btn.active { color: var(--white); border-bottom-color: var(--white); }
+
+    /* POSTS LIST */
+    .posts-list { max-width: 1080px; margin: 0 auto; padding: 0 3rem; }
+
+    .post-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 120px;
+      gap: 3rem;
+      align-items: start;
+      padding: 2.75rem 0;
+      border-bottom: 1px solid var(--gray-2);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+    .post-row:hover .post-title { color: var(--white); }
+    .post-row:hover { background: var(--gray-1); margin: 0 -2rem; padding-left: 2rem; padding-right: 2rem; }
+
+    .post-date { font-family: var(--mono); font-size: .62rem; color: var(--gray-4); letter-spacing: .12em; padding-top: .3rem; }
+    .post-tag-inline {
+      display: inline-block; margin-top: .5rem;
+      font-family: var(--mono); font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
+      padding: .15rem .6rem; border: 1px solid var(--gray-3); color: var(--gray-4);
+    }
+
+    .post-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; color: var(--gray-6); margin-bottom: .6rem; line-height: 1.2; }
+    .post-excerpt { font-size: .88rem; color: var(--gray-4); line-height: 1.7; }
+
+    .post-read {
+      font-family: var(--mono); font-size: .62rem; color: var(--gray-4);
+      letter-spacing: .1em; text-transform: uppercase;
+      padding-top: .3rem; text-align: right;
+      white-space: nowrap;
+    }
+    .post-row:hover .post-read { color: var(--white); }
+
+    /* EMPTY STATE */
+    .empty { padding: 6rem 0; text-align: center; }
+    .empty p { font-family: var(--mono); font-size: .75rem; color: var(--gray-4); letter-spacing: .1em; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--gray-3); padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; margin-top: 6rem; }
+    footer p, footer a { font-family: var(--mono); font-size: .6rem; color: var(--gray-4); letter-spacing: .1em; text-decoration: none; }
+    footer a:hover { color: var(--white); }
+
+    @media (max-width: 860px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .page-header, .filter-bar, .posts-list { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .post-row { grid-template-columns: 1fr; gap: .75rem; }
+      .post-read { text-align: left; }
+      footer { flex-direction: column; gap: .5rem; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="./index.html" class="nav-logo">YN / Portfolio</a>
+  <ul class="nav-links">
+    <li><a href="./index.html#about">About</a></li>
+    <li><a href="./index.html#projects">Projects</a></li>
+    <li><a href="./index.html#education">Education</a></li>
+    <li><a href="./blog.html" class="active">Blog</a></li>
+    <li><a href="./index.html#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="page-eyebrow">Writing</div>
+  <h1 class="page-title">Thoughts &amp;<br><em>Notes</em></h1>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="tech">Tech &amp; Programming</button>
+  <button class="filter-btn" data-filter="projects">Projects</button>
+  <button class="filter-btn" data-filter="learning">Learning</button>
+  <button class="filter-btn" data-filter="personal">Personal</button>
+</div>
+
+<div class="posts-list">
+
+  <a class="post-row" href="./posts/post-template.html" data-category="tech">
+    <div class="post-meta">
+      <div class="post-date">12 Mar 2026</div>
+      <div class="post-tag-inline">Tech</div>
+    </div>
+    <div class="post-body">
+      <div class="post-title">Why I Switched from REST to GraphQL (and Back Again)</div>
+      <p class="post-excerpt">After building three APIs with GraphQL, I learned some uncomfortable truths about when it actually helps and when it just adds complexity.</p>
+    </div>
+    <div class="post-read">5 min read →</div>
+  </a>
+
+  <a class="post-row" href="./posts/post-template.html" data-category="projects">
+    <div class="post-meta">
+      <div class="post-date">28 Feb 2026</div>
+      <div class="post-tag-inline">Projects</div>
+    </div>
+    <div class="post-body">
+      <div class="post-title">Building a Real-Time Dashboard with WebSockets and PostgreSQL</div>
+      <p class="post-excerpt">A walkthrough of the architecture decisions behind my latest project — from schema design to keeping the frontend in sync without polling.</p>
+    </div>
+    <div class="post-read">8 min read →</div>
+  </a>
+
+  <a class="post-row" href="./posts/post-template.html" data-category="learning">
+    <div class="post-meta">
+      <div class="post-date">10 Feb 2026</div>
+      <div class="post-tag-inline">Learning</div>
+    </div>
+    <div class="post-body">
+      <div class="post-title">How I Actually Learned Docker — Not Just the Commands</div>
+      <p class="post-excerpt">Most tutorials teach you how to run Docker. This is about learning why it works the way it does, and how that changed how I debug containerised apps.</p>
+    </div>
+    <div class="post-read">6 min read →</div>
+  </a>
+
+  <a class="post-row" href="./posts/post-template.html" data-category="personal">
+    <div class="post-meta">
+      <div class="post-date">01 Feb 2026</div>
+      <div class="post-tag-inline">Personal</div>
+    </div>
+    <div class="post-body">
+      <div class="post-title">One Year of Side Projects: What I Built, What I Shipped, What I Abandoned</div>
+      <p class="post-excerpt">An honest retrospective on the past year of building things outside of coursework — the wins, the half-finished repos, and what I'd do differently.</p>
+    </div>
+    <div class="post-read">4 min read →</div>
+  </a>
+
+  <a class="post-row" href="./posts/post-template.html" data-category="tech">
+    <div class="post-meta">
+      <div class="post-date">15 Jan 2026</div>
+      <div class="post-tag-inline">Tech</div>
+    </div>
+    <div class="post-body">
+      <div class="post-title">Understanding Big-O Through Code I Actually Write</div>
+      <p class="post-excerpt">Time complexity stops being abstract once you start seeing it in your own loops and database queries. Some examples that finally made it click for me.</p>
+    </div>
+    <div class="post-read">7 min read →</div>
+  </a>
+
+</div>
+
+<footer>
+  <p>© Your Name · 2025</p>
+  <a href="./index.html">← Back to Portfolio</a>
+</footer>
+
+<script>
+  // Filter logic
+  const btns = document.querySelectorAll('.filter-btn');
+  const rows = document.querySelectorAll('.post-row');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      rows.forEach(row => {
+        row.style.display = (filter === 'all' || row.dataset.category === filter) ? 'grid' : 'none';
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
